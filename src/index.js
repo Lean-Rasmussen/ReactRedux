@@ -2,6 +2,7 @@
 /*jshint esversion: 6 */
 
 // import of libraries
+import _ from "lodash";
 import React, {Component} from "react";
 import ReactDom from "react-dom";
 import YTSearch from "youtube-api-search";
@@ -22,8 +23,10 @@ class App extends Component {
 			videos : [],
 			selectedVideo: null,
 		};
-
-		YTSearch({key: API_key, term: "Quest"},(videos) => {
+		this.videoSearch("surfing");
+	}
+	videoSearch(term){
+		YTSearch({key: API_key, term: term},(videos) => {
 			this.setState({
 				videos : videos,
 				selectedVideo: videos[0],
@@ -33,9 +36,10 @@ class App extends Component {
 	}
 
 	render(){
+		const videoSearch = _.debounce((term) => {this.videoSearch(term)}, 300);
 		return (
 			<div>
-				<SearchBar />
+				<SearchBar onSearchTermChange = {videoSearch } />
 				<VideoDetail  video = {this.state.selectedVideo}/>
 				<Videolist 
 					onVideoSelect ={ selectedVideo => this.setState({selectedVideo}) } 
